@@ -32,7 +32,11 @@ class Antivirus
 	{
 		
 		$ini = eZINI::instance( "clamav.ini" );
-
+	    if ( !class_exists( 'Net_Socket' ) )
+	    {
+		    eZDebug::writeError( 'Class Net_Socket not found.', 'Antivirus::hasNoVirus()' );
+		    return null;
+        }
 		$socket = new Net_Socket();
 		
 		$host = $ini->variable( "ClamAVSettings", "Host" ); 
