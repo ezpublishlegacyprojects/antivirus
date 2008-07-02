@@ -13,7 +13,7 @@ class AntivirusType extends eZWorkflowEventType
         $this->setTriggerTypes( array( 'content' => array( 'publish' => array( 'before' ) ) ) );
     }
     
-    function execute( &$process, &$event )
+    function execute( $process, $event )
     {
         eZDebugSetting::writeDebug( 'kernel-workflow-antivirus', $process, 'antivirusType::execute' );
         eZDebugSetting::writeDebug( 'kernel-workflow-antivirus', $event, 'antivirusType::execute' );
