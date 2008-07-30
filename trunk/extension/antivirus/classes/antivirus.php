@@ -1,6 +1,4 @@
 <?php
-include_once("extension/ezpowerlib/ezpowerlib.php");
-include_once( "Net/Socket.php");
 
 class Antivirus
 {
@@ -30,12 +28,11 @@ class Antivirus
      */
 	function hasNoVirus( $file, $doRawScan = false )
 	{
-		
+		include_once( "Net/Socket.php");
 		$ini = eZINI::instance( "clamav.ini" );
 	    if ( !class_exists( 'Net_Socket' ) )
 	    {
-		    eZDebug::writeError( 'Class Net_Socket not found.', 'Antivirus::hasNoVirus()' );
-		    return null;
+		    throw new Exception( 'Class Net_Socket not found in Antivirus::hasNoVirus()' );
         }
 		$socket = new Net_Socket();
 		

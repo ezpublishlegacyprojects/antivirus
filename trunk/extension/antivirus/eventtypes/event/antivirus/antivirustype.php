@@ -1,15 +1,12 @@
 <?php
 
-include_once( 'kernel/classes/ezworkflowtype.php' );
-include_once( 'extension/antivirus/classes/antivirus.php');
-
-define( "EZ_WORKFLOW_TYPE_ANTIVIRUS_ID", "antivirus" );
-
 class AntivirusType extends eZWorkflowEventType
 {
+	const WORKFLOW_TYPE_STRING = 'antivirus';
+
     function AntivirusType()
     {
-        $this->eZWorkflowEventType( EZ_WORKFLOW_TYPE_ANTIVIRUS_ID, ezi18n( 'kernel/workflow/event', "Antivirus" ) );
+        $this->eZWorkflowEventType( AntivirusType::WORKFLOW_TYPE_STRING, ezi18n( 'kernel/workflow/event', "Antivirus" ) );
         $this->setTriggerTypes( array( 'content' => array( 'publish' => array( 'before' ) ) ) );
     }
     
@@ -23,7 +20,7 @@ class AntivirusType extends eZWorkflowEventType
         if ( !$object )
         {
             eZDebugSetting::writeError( 'kernel-workflow-approve', $parameters['object_id'], 'eZXApprove2Type::execute' );
-            return EZ_WORKFLOW_TYPE_STATUS_WORKFLOW_CANCELED;
+            return eZWorkflowEventType::STATUS_WORKFLOW_CANCELLED;
         }
         if ( $process->attribute( 'user_id' ) == 0 )
         {
@@ -57,17 +54,16 @@ class AntivirusType extends eZWorkflowEventType
                                     'templateVars' => array(  ),
                                     'path' => array( array( 'url' => false, 'text' => 'Anti virus check' ) )
                                   );
-                    return EZ_WORKFLOW_TYPE_STATUS_FETCH_TEMPLATE;
+                    return eZWorkflowEventType::STATUS_FETCH_TEMPLATE_REPEAT;
                 }
             }
         }
-        return EZ_WORKFLOW_TYPE_STATUS_ACCEPTED;
+        return eZWorkflowEventType::STATUS_ACCEPTED;
     }
     function sendMail( $template, $params = array() )
     {
         $ini = eZINI::instance();
-        include_once( "lib/ezutils/classes/ezmail.php" );
-        include_once( "lib/ezutils/classes/ezmailtransport.php" );
+
     	$mail = new eZMail();
 
         $mail->setSender( $ini->variable( 'MailSettings', 'AdminEmail' ) );
@@ -75,7 +71,7 @@ class AntivirusType extends eZWorkflowEventType
 
         include_once( 'kernel/common/template.php' );
         // fetch text from mail template
-        $mailtpl =& templateInit();
+        $mailtpl = templateInit();
         if( !isset( $params['subject'] ) )
             $params['subject'] = "Virus warning";
         foreach ( $params as $key => $value )
@@ -84,7 +80,7 @@ class AntivirusType extends eZWorkflowEventType
         }
         
          
-        $mailtext =& $mailtpl->fetch( $template );
+        $mailtext = $mailtpl->fetch( $template );
         $subject = $mailtpl->variable( 'subject' );
         $mail->setSubject( $subject );
         $mail->setBody( $mailtext );
@@ -102,6 +98,6 @@ class AntivirusType extends eZWorkflowEventType
     }
 }
 
-eZWorkflowEventType::registerType( EZ_WORKFLOW_TYPE_ANTIVIRUS_ID, "antivirustype" );
+eZWorkflowEventType::registerEventType( AntivirusType::WORKFLOW_TYPE_STRING, "antivirustype" );
 
 ?>
