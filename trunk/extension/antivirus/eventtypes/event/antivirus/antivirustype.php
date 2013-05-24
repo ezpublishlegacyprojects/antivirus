@@ -6,7 +6,7 @@ class AntivirusType extends eZWorkflowEventType
 
     function AntivirusType()
     {
-        $this->eZWorkflowEventType( AntivirusType::WORKFLOW_TYPE_STRING, ezi18n( 'kernel/workflow/event', "Antivirus" ) );
+        $this->eZWorkflowEventType( AntivirusType::WORKFLOW_TYPE_STRING, ezpI18n::tr( 'kernel/workflow/event', "Antivirus" ) );
         $this->setTriggerTypes( array( 'content' => array( 'publish' => array( 'before' ) ) ) );
     }
     
@@ -71,7 +71,7 @@ class AntivirusType extends eZWorkflowEventType
 
         include_once( 'kernel/common/template.php' );
         // fetch text from mail template
-        $mailtpl = templateInit();
+        $mailtpl = eZTemplate::factory();
         if( !isset( $params['subject'] ) )
             $params['subject'] = "Virus warning";
         foreach ( $params as $key => $value )
